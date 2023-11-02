@@ -2,11 +2,14 @@ package com.example.sol
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -25,11 +28,14 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ComposableInferredTarget
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -57,26 +63,35 @@ fun BottomBar() {
 @Composable
 fun GenerateSolarCard(image: SolarImage) {
     Card(
-        modifier = Modifier.fillMaxSize(),
-
-        ) {
+        modifier = Modifier.size(200.dp)
+    )
+    {
         Image(
             painter = painterResource(id = image.route),
-            contentDescription = image.name
+            contentDescription = image.name,
+            modifier = Modifier.fillMaxWidth().size(150.dp),
+            contentScale = ContentScale.Inside
         )
 
         Divider()
+
         Row (
-            horizontalArrangement = Arrangement.End
+            horizontalArrangement = Arrangement.SpaceAround,
+            verticalAlignment = Alignment.CenterVertically
         ){
             var state  by rememberSaveable { mutableStateOf(false) }
-            Text(text = image.name, style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Bold))
+            Text(
+                text = image.name,
+                style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Bold),
+                modifier = Modifier.padding(top = 10.dp),
+            )
 
-            DropdownMenu(expanded = state , onDismissRequest = { state = !state }) {
-                Image(painter = painterResource(id = R.drawable.triple_dots), contentDescription = "dotsmenu")
-            }
+            Image(
+                painter = painterResource(id = R.drawable.triple_dots),
+                contentDescription = "",
+
+            )
         }
-
     }
 }
 

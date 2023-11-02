@@ -99,20 +99,18 @@ fun FAB() {
         }
     }
 }
-@Preview
+//@Preview
 @Composable
 fun Content() {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().padding(8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ){
         val images = getSolarImages()
         items(images.size){
             GenerateSolarCard(image = images[it])
-
         }
     }
-
 }
