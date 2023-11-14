@@ -12,48 +12,40 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CardElevation
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FabPosition
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.sol.ui.theme.SolTheme
-import androidx.navigation.NavHost
 
 class MainActivity : ComponentActivity() {
-    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             SolTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    MyApp()
-
-                }
+                MyApp()
             }
         }
     }
@@ -63,25 +55,27 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MyApp() {
     Scaffold(
-        bottomBar = { ToolBar() },
-
+        bottomBar = { ToolBar() }
     ){
         Content()
     }
 }
 
-//@Preview
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ToolBar() {
     BottomAppBar(
         containerColor = Color.Red
     ){
+        IconButton(onClick = { /*TODO*/ }) {
+            Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "LateralMenu")
+        }
+
+        FavBadgedBox()
+
         FAB()
     }
 }
 
-//@Preview
 @Composable
 fun FAB() {
     Box(
@@ -93,18 +87,33 @@ fun FAB() {
         var context = LocalContext.current
         Button(
             onClick = { Toast.makeText(context, "Hola!", Toast.LENGTH_SHORT).show() },
-            modifier = Modifier.clip(CircleShape),
+            modifier = Modifier.clip(RoundedCornerShape(50.dp)),
         ) {
             Image(painter = painterResource(id = R.drawable.ic_more), contentDescription = "")
         }
     }
 }
-//@Preview
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun FavBadgedBox() {
+    var count by rememberSaveable { mutableStateOf(0) }
+    BadgedBox(badge = { Text(text = "$count") }) {
+        IconButton(onClick = { count++ }) {
+            Icon(imageVector = Icons.Default.Favorite, contentDescription = "Fav")
+        }
+    }
+}
+
 @Composable
 fun Content() {
+    val estado = rememberLazyGridState()
     LazyVerticalGrid(
+        state = estado,
         columns = GridCells.Fixed(2),
-        modifier = Modifier.fillMaxSize().padding(8.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(6.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ){
