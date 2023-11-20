@@ -67,21 +67,18 @@ fun GenerateSolarCard(image: SolarImage) {
             IconButton(onClick = { showDropDownMenu = true }) {
                 Icon(imageVector = Icons.Default.MoreVert, contentDescription = "Options")
 
-                DropDownMenu()
+                DropDownMenu(showDropDownMenu){ showDropDownMenu = it }
             }
         }
     }
 }
 
 @Composable
-fun DropDownMenu(showDropDownMenu: Boolean) {
-    var show by rememberSaveable {
-        mutableStateOf(showDropDownMenu)
-    }
+fun DropDownMenu(showDropDownMenu: Boolean, onExpandedChange:(Boolean) -> Unit) {
 
     DropdownMenu(
-        expanded = show,
-        onDismissRequest = { show = false }
+        expanded = showDropDownMenu,
+        onDismissRequest = { onExpandedChange(false) }
     ) {
         DropdownMenuItem(
             text = { Text("Compartir") },
