@@ -20,14 +20,20 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
+import androidx.compose.material3.DrawerState
+import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -36,8 +42,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.compose.rememberNavController
 import com.example.sol.ui.theme.SolTheme
 
 class MainActivity : ComponentActivity() {
@@ -45,34 +51,85 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             SolTheme {
-                MyApp()
+                var navDrawerState = rememberDrawerState(DrawerValue.Closed)
+                var scope = rememberCoroutineScope()
+                var navController = rememberNavController()
+
+                MyApp(navDrawerState)
             }
         }
     }
 }
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@Preview
 @Composable
-fun MyApp() {
+fun MyApp(navDrawerState: DrawerState) {
     Scaffold(
-        bottomBar = { ToolBar() }
+        bottomBar = { ToolBar(navDrawerState) }
     ){
         Content()
     }
 }
 
 @Composable
-fun ToolBar() {
+fun ToolBar(navDrawerState: DrawerState) {
     BottomAppBar(
-        containerColor = Color.Red
+        containerColor = Color.Red,
     ){
-        IconButton(onClick = { /*TODO*/ }) {
+        IconButton(onClick = { navDrawerState.isOpen }) {
             Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "LateralMenu")
         }
+
+        NavigationDrawer(navDrawerState)
 
         FavBadgedBox()
 
         FAB()
+    }
+}
+
+@Composable
+fun NavigationDrawer(navDrawerState: DrawerState) {
+
+    var screen by rememberSaveable {
+        mutableStateOf("")
+    }
+
+    ModalNavigationDrawer(
+        drawerState = navDrawerState,
+        drawerContent = {
+            //To-do suelto así o bien metido en un ModalDrawerSheet
+            Image(painter = painterResource(id = R.drawable.magnetosfera), contentDescription = "")
+
+            NavigationDrawerItem(
+                label = { Text("Build") },
+                selected = ,
+                onClick = { /*TODO*/ }
+            )
+
+            NavigationDrawerItem(
+                label = { Text("Info") },
+                selected = ,
+                onClick = { /*TODO*/ }
+            )
+
+            NavigationDrawerItem(
+                label = { Text("Email") },
+                selected = ,
+                onClick = { /*TODO*/ }
+            )
+        },
+
+    ) {}
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun FavBadgedBox() {
+    var count by rememberSaveable { mutableStateOf(0) }
+    BadgedBox(badge = { Text(text = "$count") }) {
+        IconButton(onClick = { count++ }) {
+            Icon(imageVector = Icons.Default.Favorite, contentDescription = "Fav")
+        }
     }
 }
 
@@ -94,22 +151,11 @@ fun FAB() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun FavBadgedBox() {
-    var count by rememberSaveable { mutableStateOf(0) }
-    BadgedBox(badge = { Text(text = "$count") }) {
-        IconButton(onClick = { count++ }) {
-            Icon(imageVector = Icons.Default.Favorite, contentDescription = "Fav")
-        }
-    }
-}
-
 @Composable
 fun Content() {
-    val estado = rememberLazyGridState()
+    val state = rememberLazyGridState()
     LazyVerticalGrid(
-        state = estado,
+        state = state,
         columns = GridCells.Fixed(2),
         modifier = Modifier
             .fillMaxSize()
